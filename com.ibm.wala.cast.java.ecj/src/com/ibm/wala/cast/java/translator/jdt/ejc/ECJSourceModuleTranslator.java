@@ -69,6 +69,7 @@ import com.ibm.wala.types.ClassLoaderReference;
 import com.ibm.wala.util.collections.HashMapFactory;
 import com.ibm.wala.util.collections.Pair;
 import com.ibm.wala.util.debug.Assertions;
+import com.ibm.wala.util.strings.Atom;
 
 /**
  * A SourceModuleTranslator whose implementation of loadAllSources() uses the PolyglotFrontEnd pseudo-compiler to generate DOMO IR
@@ -129,7 +130,7 @@ public class ECJSourceModuleTranslator implements SourceModuleTranslator {
     List<String> sources = new LinkedList<String>();
     List<String> libs = new LinkedList<String>();
     
-    ClassLoaderReference cl = scope.getApplicationLoader();
+    ClassLoaderReference cl = scope.getLoader(Atom.findOrCreate("Source".getBytes()));
 
     while (cl != null) {
       List<Module> modules = scope.getModules(cl);
@@ -174,7 +175,7 @@ public class ECJSourceModuleTranslator implements SourceModuleTranslator {
     String[] sourceFiles = sources.toArray(new String[ sources.size() ]);
     final ASTParser parser = ASTParser.newParser(AST.JLS8);
     parser.setResolveBindings(true);
-    parser.setEnvironment(libs, null, null, false);
+    parser.setEnvironment(libs, this.sources, null, false);
     Hashtable options = JavaCore.getOptions();
     options.put(JavaCore.COMPILER_SOURCE, "1.8");
     parser.setCompilerOptions(options);
