@@ -47,8 +47,8 @@ import com.ibm.wala.ipa.callgraph.AnalysisScope;
 import com.ibm.wala.ipa.callgraph.CGNode;
 import com.ibm.wala.ipa.callgraph.CallGraph;
 import com.ibm.wala.ipa.callgraph.Entrypoint;
-import com.ibm.wala.ipa.cha.ClassHierarchy;
 import com.ibm.wala.ipa.cha.ClassHierarchyException;
+import com.ibm.wala.ipa.cha.ClassHierarchyFactory;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.ssa.SymbolTable;
 import com.ibm.wala.types.MethodReference;
@@ -115,7 +115,7 @@ public class JSCallGraphUtil extends com.ibm.wala.cast.ipa.callgraph.CAstCallGra
     return makeHierarchy(scope, loaders);
   }
   public static IClassHierarchy makeHierarchy(AnalysisScope scope, ClassLoaderFactory loaders) throws ClassHierarchyException {
-    return ClassHierarchy.make(scope, loaders, JavaScriptLoader.JS);
+    return ClassHierarchyFactory.make(scope, loaders, JavaScriptLoader.JS);
   }
 
   public static JavaScriptEntryPoints makeScriptRoots(IClassHierarchy cha) {
@@ -165,16 +165,19 @@ public class JSCallGraphUtil extends com.ibm.wala.cast.ipa.callgraph.CAstCallGra
   /**
    * @param cha
    * @param cl
-   * @param fileName
    * @param url
    * @return The set of class names that where defined in the CHA as a result
    *         loading process.
    * @throws IOException
    */
-  public static Set<String> loadAdditionalFile(IClassHierarchy cha, JavaScriptLoader cl, String fileName, URL url)
+  public static Set<String> loadAdditionalFile(IClassHierarchy cha, JavaScriptLoader cl, URL url)
+      throws IOException {
+    return loadAdditionalFile(cha, cl, new SourceURLModule(url));
+  }
+  
+  public static Set<String> loadAdditionalFile(IClassHierarchy cha, JavaScriptLoader cl, SourceModule M)
       throws IOException {
     try {
-      SourceURLModule M = new SourceURLModule(url);
       TranslatorToCAst toCAst = getTranslatorFactory().make(new CAstImpl(), M);
       final Set<String> names = new HashSet<String>();
       JSAstTranslator toIR = new JSAstTranslator(cl) {

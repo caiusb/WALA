@@ -541,7 +541,7 @@ public class JavaLanguage extends LanguageImpl implements BytecodeLanguage, Cons
   }
 
   /**
-   * @return Collection<TypeReference>, set of exception types a call to a declared target might throw.
+   * @return {@link Collection}&lt;{@link TypeReference}&gt;, set of exception types a call to a declared target might throw.
    * @throws InvalidClassFileException
    * @throws IllegalArgumentException if target is null
    * @throws IllegalArgumentException if cha is null
@@ -753,5 +753,10 @@ public class JavaLanguage extends LanguageImpl implements BytecodeLanguage, Cons
   public MethodReference getInvokeMethodReference(ClassLoaderReference loader, IInvokeInstruction instruction) {
     return MethodReference.findOrCreate(this, loader, instruction.getClassType(), instruction.getMethodName(),
         instruction.getMethodSignature());
+  }
+
+  @Override
+  public boolean methodsHaveDeclaredParameterTypes() {
+    return true;
   }
 }

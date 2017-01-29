@@ -28,8 +28,8 @@ import com.ibm.wala.ipa.callgraph.CallGraphStats;
 import com.ibm.wala.ipa.callgraph.Entrypoint;
 import com.ibm.wala.ipa.callgraph.impl.DefaultEntrypoint;
 import com.ibm.wala.ipa.callgraph.impl.Util;
-import com.ibm.wala.ipa.cha.ClassHierarchy;
 import com.ibm.wala.ipa.cha.ClassHierarchyException;
+import com.ibm.wala.ipa.cha.ClassHierarchyFactory;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.types.ClassLoaderReference;
 import com.ibm.wala.types.TypeReference;
@@ -63,13 +63,14 @@ public class ScopeFileCallGraph {
     String scopeFile = p.getProperty("scopeFile");
     String entryClass = p.getProperty("entryClass");
     String mainClass = p.getProperty("mainClass");
+    String dump = p.getProperty("dump");
     if (mainClass != null && entryClass != null) {
       throw new IllegalArgumentException("only specify one of mainClass or entryClass");
     }
     // use exclusions to eliminate certain library packages
     File exclusionsFile = null;
     AnalysisScope scope = AnalysisScopeReader.readJavaScope(scopeFile, exclusionsFile, ScopeFileCallGraph.class.getClassLoader());
-    IClassHierarchy cha = ClassHierarchy.make(scope);
+    IClassHierarchy cha = ClassHierarchyFactory.make(scope);
     System.out.println(cha.getNumberOfClasses() + " classes");
     System.out.println(Warnings.asString());
     Warnings.clear();
@@ -87,6 +88,9 @@ public class ScopeFileCallGraph {
     CallGraph cg = builder.makeCallGraph(options, null);
     long end = System.currentTimeMillis();
     System.out.println("done");
+    if (dump != null) {
+      System.err.println(cg);
+    }
     System.out.println("took " + (end-start) + "ms");
     System.out.println(CallGraphStats.getStats(cg));
   }

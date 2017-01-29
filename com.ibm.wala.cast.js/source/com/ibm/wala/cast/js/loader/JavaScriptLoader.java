@@ -69,6 +69,7 @@ import com.ibm.wala.classLoader.IField;
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.classLoader.Language;
 import com.ibm.wala.classLoader.LanguageImpl;
+import com.ibm.wala.classLoader.ModuleEntry;
 import com.ibm.wala.classLoader.NewSiteReference;
 import com.ibm.wala.classLoader.SourceModule;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
@@ -204,6 +205,11 @@ public class JavaScriptLoader extends CAstAbstractModuleLoader {
     @Override
     public TypeReference getPointerType(TypeReference pointee) throws UnsupportedOperationException {
       throw new UnsupportedOperationException("JavaScript does not permit explicit pointers");
+    }
+
+    @Override
+    public boolean methodsHaveDeclaredParameterTypes() {
+      return false;
     }
 
     @Override
@@ -1008,8 +1014,8 @@ public class JavaScriptLoader extends CAstAbstractModuleLoader {
 
   @SuppressWarnings("unchecked")
   @Override
-  protected TranslatorToCAst getTranslatorToCAst(final CAst ast, SourceModule module) {
-    TranslatorToCAst translator = translatorFactory.make(ast, module);
+  protected TranslatorToCAst getTranslatorToCAst(final CAst ast, ModuleEntry module) {
+    TranslatorToCAst translator = translatorFactory.make(ast, (SourceModule)module);
     if(preprocessor != null)
       translator.addRewriter(preprocessor, true);
     return translator;

@@ -1066,7 +1066,7 @@ public abstract class JDTJava2CAstTranslator<T extends Position> {
          * NOT INCLUDING first parameter 'this' (for non-static methods)
          */
         @Override
-        public List getArgumentTypes() {
+        public List<CAstType> getArgumentTypes() {
           return fParameterTypes;
         }
 
@@ -1085,13 +1085,13 @@ public abstract class JDTJava2CAstTranslator<T extends Position> {
         }
 
         @Override
-        public Collection getSupertypes() {
+        public Collection<CAstType> getSupertypes() {
           Assertions.UNREACHABLE("CAstType.FunctionImpl#getSupertypes() called???");
           return null;
         }
 
         @Override
-        public Collection/* <CAstType> */getExceptionTypes() {
+        public Collection<CAstType>/* <CAstType> */getExceptionTypes() {
           if (fExceptionTypes == null) {
             fExceptionTypes = new LinkedHashSet<CAstType>();
             if (fDecl != null)
@@ -1291,6 +1291,7 @@ public abstract class JDTJava2CAstTranslator<T extends Position> {
     else
       modifiers = ((FieldDeclaration) n.getParent()).getModifiers();
     boolean isFinal = (modifiers & Modifier.FINAL) != 0;
+    assert n.resolveBinding() != null : n;
     ITypeBinding type = n.resolveBinding().getType();
     Expression init = n.getInitializer();
     CAstNode initNode;
@@ -1778,7 +1779,7 @@ public abstract class JDTJava2CAstTranslator<T extends Position> {
     if (n.resolveBinding() instanceof ITypeBinding)
       return makeNode(context, fFactory, null, CAstNode.EMPTY);
 
-    assert n.resolveBinding() instanceof IVariableBinding : "SimpleName's binding is not a variable or a type binding!";
+    assert n.resolveBinding() instanceof IVariableBinding : "SimpleName's binding, " + n.resolveBinding() + ", is not a variable or a type binding!";
 
     IVariableBinding binding = (IVariableBinding) n.resolveBinding();
     binding = binding.getVariableDeclaration(); // ignore weird generic stuff
