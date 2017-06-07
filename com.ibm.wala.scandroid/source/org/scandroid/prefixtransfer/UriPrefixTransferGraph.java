@@ -86,28 +86,28 @@ import com.ibm.wala.util.intset.OrdinalSetMapping;
 
 public class UriPrefixTransferGraph implements Graph<InstanceKeySite> {
 	
-    public final Map<InstanceKey, InstanceKeySite> nodeMap = new HashMap<InstanceKey, InstanceKeySite>();
+    public final Map<InstanceKey, InstanceKeySite> nodeMap = new HashMap<>();
     public final Map<InstanceKey, StringBuilderUseAnalysis> sbuaMap =
-    	new HashMap<InstanceKey, StringBuilderUseAnalysis>();
+    	new HashMap<>();
 
-    private final List<InstanceKeySite> nodes = new ArrayList<InstanceKeySite>();
+    private final List<InstanceKeySite> nodes = new ArrayList<>();
     private final Map<InstanceKeySite,Set<InstanceKeySite>> successors =
-    	new HashMap<InstanceKeySite, Set<InstanceKeySite>>();
+    	new HashMap<>();
     private final Map<InstanceKeySite,Set<InstanceKeySite>> predecessors =
-    	new HashMap<InstanceKeySite, Set<InstanceKeySite>>();
+    	new HashMap<>();
 
     public UriPrefixTransferGraph(final PointerAnalysis<InstanceKey> pa) {
         final Map<InstanceKeySite, Set<InstanceKey>> unresolvedDependencies =
-        	new HashMap<InstanceKeySite, Set<InstanceKey>>();
+        	new HashMap<>();
         final OrdinalSetMapping<InstanceKey> mapping = pa.getInstanceKeyMapping();
         final Collection<InstanceKey> instanceKeys = pa.getInstanceKeys();
         
         for (final InstanceKey k : instanceKeys) {
-        	handleStringBuilder(k, pa, mapping, unresolvedDependencies);
+        	handleStringBuilder(k, pa);
         }
         
         for (final InstanceKey k : instanceKeys) {
-        	handleString(k, pa, mapping, unresolvedDependencies);
+        	handleString(k, mapping, unresolvedDependencies);
         }
 
         for (final PointerKey pk : pa.getPointerKeys()) {
@@ -135,8 +135,7 @@ public class UriPrefixTransferGraph implements Graph<InstanceKeySite> {
         }
     }
     
-    private void handleString(final InstanceKey ik, final PointerAnalysis<InstanceKey> pa,
-    		final OrdinalSetMapping<InstanceKey> mapping,
+    private void handleString(final InstanceKey ik, final OrdinalSetMapping<InstanceKey> mapping,
     		final Map<InstanceKeySite, Set<InstanceKey>> unresolvedDependencies) {
         if (isOfType(ik, "Ljava/lang/String")) {
             if (ik instanceof ConstantKey) {
@@ -146,14 +145,12 @@ public class UriPrefixTransferGraph implements Graph<InstanceKeySite> {
                 nodeMap.put(ik, node);
             } else if (ik instanceof NormalAllocationInNode) {
             	final NormalAllocationInNode nain = (NormalAllocationInNode) ik;
-            	handleStringBuilderToString(nain, pa, mapping, unresolvedDependencies);
+            	handleStringBuilderToString(nain, mapping, unresolvedDependencies);
             }
         }
     }
     
-    private void handleStringBuilder(final InstanceKey ik, final PointerAnalysis<InstanceKey> pa,
-    		final OrdinalSetMapping<InstanceKey> mapping,
-    		final Map<InstanceKeySite, Set<InstanceKey>> unresolvedDependencies) {
+    private void handleStringBuilder(final InstanceKey ik, final PointerAnalysis<InstanceKey> pa) {
     	
         if (isOfType(ik, "Ljava/lang/StringBuilder")) {
             if (ik instanceof AllocationSiteInNode) {
@@ -173,8 +170,7 @@ public class UriPrefixTransferGraph implements Graph<InstanceKeySite> {
         }
     }
     
-    private void handleStringBuilderToString(final NormalAllocationInNode nain, final PointerAnalysis<InstanceKey> pa,
-    		final OrdinalSetMapping<InstanceKey> mapping,
+    private void handleStringBuilderToString(final NormalAllocationInNode nain, final OrdinalSetMapping<InstanceKey> mapping,
     		final Map<InstanceKeySite, Set<InstanceKey>> unresolvedDependencies) {
         if (hasSignature(nain, "java.lang.StringBuilder.toString()Ljava/lang/String;")) {
             final Context context = nain.getNode().getContext();
@@ -193,7 +189,7 @@ public class UriPrefixTransferGraph implements Graph<InstanceKeySite> {
                         
                         final StringBuilderToStringInstanceKeySite s2si =
                         		(StringBuilderToStringInstanceKeySite) node;
-                        final HashSet<InstanceKey> iks = new HashSet<InstanceKey>();
+                        final HashSet<InstanceKey> iks = new HashSet<>();
                         
                         for (final Integer i: s2si.concatenatedInstanceKeys) {
                             iks.add(mapping.getMappedObject(i));
@@ -244,7 +240,7 @@ public class UriPrefixTransferGraph implements Graph<InstanceKeySite> {
 						if (!nodeMap.containsKey(returnIK)) {
 							addNode(node);
 							nodeMap.put(returnIK, node);
-							final HashSet<InstanceKey> iks = new HashSet<InstanceKey>();
+							final HashSet<InstanceKey> iks = new HashSet<>();
 							iks.add(uriKey);
 							iks.add(stringKey);
 							unresolvedDependencies.put(node, iks);
@@ -284,7 +280,7 @@ public class UriPrefixTransferGraph implements Graph<InstanceKeySite> {
                     
                     addNode(node);
                     nodeMap.put(ik, node);
-                    final HashSet<InstanceKey> iks = new HashSet<InstanceKey>();
+                    final HashSet<InstanceKey> iks = new HashSet<>();
                     iks.add(uriKey);
                     iks.add(stringKey);
                     unresolvedDependencies.put(node, iks);
@@ -317,90 +313,106 @@ public class UriPrefixTransferGraph implements Graph<InstanceKeySite> {
                 
                 addNode(node);
                 nodeMap.put(ik, node);
-                final HashSet<InstanceKey> iks = new HashSet<InstanceKey>();
+                final HashSet<InstanceKey> iks = new HashSet<>();
                 iks.add(stringKey);
                 unresolvedDependencies.put(node, iks);
             }
     	}
     }
 
+    @Override
     public void removeNodeAndEdges(InstanceKeySite n) throws UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void addNode(final InstanceKeySite n) {
         predecessors.put(n, new HashSet<InstanceKeySite>());
         successors.put(n, new HashSet<InstanceKeySite>());
         nodes.add(n);
     }
 
+    @Override
     public boolean containsNode(final InstanceKeySite n) {
         return nodes.contains(n);
     }
 
+    @Override
     public int getNumberOfNodes() {
         return nodes.size();
     }
 
+    @Override
     public Iterator<InstanceKeySite> iterator() {
         return nodes.iterator();
     }
 
+    @Override
     public void removeNode(final InstanceKeySite n) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void addEdge(final InstanceKeySite src, final InstanceKeySite dst) {
         Set<InstanceKeySite> predSet = predecessors.get(dst);
         if (predSet == null) {
-            predSet = new HashSet<InstanceKeySite>();
+            predSet = new HashSet<>();
             predecessors.put(dst, predSet);
         }
         predSet.add(src);
 
         Set<InstanceKeySite> succSet = successors.get(src);
         if (succSet == null) {
-            succSet = new HashSet<InstanceKeySite>();
+            succSet = new HashSet<>();
             successors.put(src, succSet);
         }
         succSet.add(dst);
     }
 
+    @Override
     public int getPredNodeCount(final InstanceKeySite n) {
         return predecessors.get(n).size();
     }
 
+    @Override
     public Iterator<InstanceKeySite> getPredNodes(InstanceKeySite n) {
         return predecessors.get(n).iterator();
     }
 
+    @Override
     public int getSuccNodeCount(InstanceKeySite N) {
         return successors.get(N).size();
     }
 
+    @Override
     public Iterator<InstanceKeySite> getSuccNodes(InstanceKeySite n) {
         return successors.get(n).iterator();
     }
 
+    @Override
     public boolean hasEdge(InstanceKeySite src, InstanceKeySite dst) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void removeAllIncidentEdges(InstanceKeySite node)
             throws UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void removeEdge(InstanceKeySite src, InstanceKeySite dst)
             throws UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void removeIncomingEdges(InstanceKeySite node)
             throws UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void removeOutgoingEdges(InstanceKeySite node)
             throws UnsupportedOperationException {
         throw new UnsupportedOperationException();

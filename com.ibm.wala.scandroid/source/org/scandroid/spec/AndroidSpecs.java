@@ -196,6 +196,7 @@ public class AndroidSpecs implements ISpecs {
 		glStatusChanged,
 		nlNmeaRecvd,
 	};
+	@Override
 	public MethodNamePattern[] getEntrypointSpecs() { return defaultCallbacks; }
 
 
@@ -254,6 +255,7 @@ public class AndroidSpecs implements ISpecs {
 		
 	};
 	
+	@Override
 	public SourceSpec[] getSourceSpecs() { return sourceSpecs; }
 
 	/**
@@ -293,6 +295,7 @@ public class AndroidSpecs implements ISpecs {
 		new CallArgSinkSpec(new MethodNamePattern(sms, "sendDataMessage"), null),
 	};
 
+	@Override
 	public SinkSpec[] getSinkSpecs() { return sinkSpecs; }
 
 	private static MethodNamePattern[] callBacks = new MethodNamePattern[]{};
@@ -302,7 +305,7 @@ public class AndroidSpecs implements ISpecs {
 //		return callBacks;
 //	}
 	public void addPossibleListeners(ClassHierarchy cha) {
-		Set<String> ignoreMethods = new HashSet<String>();
+		Set<String> ignoreMethods = new HashSet<>();
 		ignoreMethods.add("<init>");
 		ignoreMethods.add("<clinit>");
 		ignoreMethods.add("registerNatives");
@@ -316,7 +319,7 @@ public class AndroidSpecs implements ISpecs {
 		ignoreMethods.add("finalize");
 		ignoreMethods.add("wait");		
 
-		List<MethodNamePattern> moreEntryPointSpecs = new ArrayList<MethodNamePattern> ();
+		List<MethodNamePattern> moreEntryPointSpecs = new ArrayList<> ();
 		
 		//add default entrypoints from AndroidSpecs.entrypointSpecs
 		//Currently adds methods even if they exist in the ignnoreMethods

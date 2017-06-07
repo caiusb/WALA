@@ -36,18 +36,18 @@ public class ClassSearcher {
   private static int scanned = 0;
 
   public static void main(String[] args) throws Exception {
-    instrumenter = new OfflineInstrumenter(true);
+    instrumenter = new OfflineInstrumenter();
 
-    Writer w = new BufferedWriter(new FileWriter("report", true));
+    try (final Writer w = new BufferedWriter(new FileWriter("report", true))) {
 
-    instrumenter.parseStandardArgs(args);
-    instrumenter.beginTraversal();
-    ClassInstrumenter ci;
-    while ((ci = instrumenter.nextClass()) != null) {
-      doClass(ci, w, instrumenter.getLastClassResourceName());
+      instrumenter.parseStandardArgs(args);
+      instrumenter.beginTraversal();
+      ClassInstrumenter ci;
+      while ((ci = instrumenter.nextClass()) != null) {
+        doClass(ci, w, instrumenter.getLastClassResourceName());
+      }
+      instrumenter.close();
     }
-    instrumenter.close();
-    w.close();
 
     System.out.println("Classes scanned: " + scanned);
   }

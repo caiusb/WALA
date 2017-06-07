@@ -33,6 +33,7 @@ import com.ibm.wala.shrikeBT.IInvokeInstruction.Dispatch;
 import com.ibm.wala.ssa.ConstantValue;
 import com.ibm.wala.ssa.DefUse;
 import com.ibm.wala.ssa.IR;
+import com.ibm.wala.ssa.IRView;
 import com.ibm.wala.ssa.ISSABasicBlock;
 import com.ibm.wala.ssa.SSAFieldAccessInstruction;
 import com.ibm.wala.ssa.SSAGetInstruction;
@@ -275,7 +276,7 @@ public class MethodHandles {
             code.addStatement(insts.InvokeInstruction(code.getNextProgramCounter(), 2*nargs+3, params, 2*nargs+4, site, null));
             code.addStatement(insts.ReturnInstruction(code.getNextProgramCounter(), 2*nargs+3, false));
           } else {
-            int nargs = node.getMethod().getNumberOfParameters();
+            // int nargs = node.getMethod().getNumberOfParameters();
           }
         } else {
           assert isType(node);
@@ -286,6 +287,11 @@ public class MethodHandles {
       }
 
       return irs.get(node).get();
+    }
+
+    @Override
+    public IRView getIRView(CGNode node) {
+      return getIR(node);
     }
 
     @Override

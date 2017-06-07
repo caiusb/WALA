@@ -16,13 +16,15 @@ import java.util.Properties;
 
 import com.ibm.wala.core.tests.callGraph.CallGraphTestUtil;
 import com.ibm.wala.examples.properties.WalaExamplesProperties;
-import com.ibm.wala.ipa.callgraph.AnalysisCache;
+import com.ibm.wala.ipa.callgraph.AnalysisCacheImpl;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions;
 import com.ibm.wala.ipa.callgraph.AnalysisScope;
 import com.ibm.wala.ipa.callgraph.CallGraph;
 import com.ibm.wala.ipa.callgraph.CallGraphBuilder;
 import com.ibm.wala.ipa.callgraph.Entrypoint;
 import com.ibm.wala.ipa.callgraph.impl.Util;
+import com.ibm.wala.ipa.callgraph.propagation.InstanceKey;
+import com.ibm.wala.ipa.callgraph.propagation.PointerAnalysis;
 import com.ibm.wala.ipa.cha.ClassHierarchy;
 import com.ibm.wala.ipa.cha.ClassHierarchyFactory;
 import com.ibm.wala.ipa.slicer.HeapStatement;
@@ -34,8 +36,8 @@ import com.ibm.wala.ipa.slicer.Slicer.DataDependenceOptions;
 import com.ibm.wala.ipa.slicer.Statement;
 import com.ibm.wala.properties.WalaProperties;
 import com.ibm.wala.util.CancelException;
-import com.ibm.wala.util.WalaException;
 import com.ibm.wala.util.Predicate;
+import com.ibm.wala.util.WalaException;
 import com.ibm.wala.util.config.AnalysisScopeReader;
 import com.ibm.wala.util.debug.Assertions;
 import com.ibm.wala.util.graph.Graph;
@@ -126,9 +128,10 @@ public class PDFSDG {
       Iterable<Entrypoint> entrypoints = com.ibm.wala.ipa.callgraph.impl.Util.makeMainEntrypoints(scope, cha, mainClass);
       AnalysisOptions options = CallGraphTestUtil.makeAnalysisOptions(scope, entrypoints);
 
-      CallGraphBuilder builder = Util.makeZeroOneCFABuilder(options, new AnalysisCache(), cha, scope);
+      CallGraphBuilder<InstanceKey> builder = Util.makeZeroOneCFABuilder(options, new AnalysisCacheImpl(), cha, scope);
       CallGraph cg = builder.makeCallGraph(options,null);
-      SDG sdg = new SDG(cg, builder.getPointerAnalysis(), dOptions, cOptions);
+      final PointerAnalysis<InstanceKey> pointerAnalysis = builder.getPointerAnalysis();
+      SDG<?> sdg = new SDG<>(cg, pointerAnalysis, dOptions, cOptions);
       try {
         GraphIntegrity.check(sdg);
       } catch (UnsoundGraphException e1) {
@@ -161,7 +164,7 @@ public class PDFSDG {
     }
   }
 
-  private static Graph<Statement> pruneSDG(final SDG sdg) {
+  private static Graph<Statement> pruneSDG(final SDG<?> sdg) {
     Predicate<Statement> f = new Predicate<Statement>() {
       @Override public boolean test(Statement s) {
         if (s.getNode().equals(sdg.getCallGraph().getFakeRootNode())) {

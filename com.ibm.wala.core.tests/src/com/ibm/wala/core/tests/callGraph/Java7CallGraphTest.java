@@ -21,6 +21,7 @@ import org.junit.Test;
 import com.ibm.wala.analysis.reflection.java7.MethodHandles;
 import com.ibm.wala.core.tests.shrike.DynamicCallGraphTestBase;
 import com.ibm.wala.ipa.callgraph.AnalysisCache;
+import com.ibm.wala.ipa.callgraph.AnalysisCacheImpl;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions;
 import com.ibm.wala.ipa.callgraph.AnalysisScope;
 import com.ibm.wala.ipa.callgraph.CallGraph;
@@ -42,7 +43,9 @@ import com.ibm.wala.util.io.TemporaryFile;
 public class Java7CallGraphTest extends DynamicCallGraphTestBase {
 
   @Test public void testOcamlHelloHash() throws ClassHierarchyException, IllegalArgumentException, CancelException, IOException, ClassNotFoundException, InvalidClassFileException, FailureException, SecurityException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InterruptedException {
-    testOCamlJar("hello_hash.jar");
+    if (!"True".equals(System.getenv("APPVEYOR"))) {
+      testOCamlJar("hello_hash.jar");
+    }
   }
 
   private void testOCamlJar(String jarFile, String... args) throws ClassHierarchyException, IllegalArgumentException, CancelException, IOException, ClassNotFoundException, InvalidClassFileException, FailureException, SecurityException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InterruptedException {   
@@ -55,7 +58,7 @@ public class Java7CallGraphTest extends DynamicCallGraphTestBase {
     ClassHierarchy cha = ClassHierarchyFactory.make(scope);
     Iterable<Entrypoint> entrypoints = com.ibm.wala.ipa.callgraph.impl.Util.makeMainEntrypoints(scope, cha, "Lpack/ocamljavaMain");
     AnalysisOptions options = CallGraphTestUtil.makeAnalysisOptions(scope, entrypoints);
-    AnalysisCache cache = new AnalysisCache();
+    AnalysisCache cache = new AnalysisCacheImpl();
     
     SSAPropagationCallGraphBuilder builder = Util.makeZeroOneContainerCFABuilder(options, cache, cha, scope);
     

@@ -96,9 +96,9 @@ public class EntryArgSourceSpec extends SourceSpec {
 
 		for(CGNode node: cg.getNodes(im.getReference())) {
 		    for(int i: newArgNums) {
-		        FlowType<E> flow = new ParameterFlow<E>(block, i, true);
+		        FlowType<E> flow = new ParameterFlow<>(block, i, true);
 		        final int ssaVal = node.getIR().getParameter(i);
-				final Set<CodeElement> valueElements = CodeElement.valueElements(pa, node, ssaVal);
+				final Set<CodeElement> valueElements = CodeElement.valueElements(ssaVal);
 				
 				PointerKey pk = pa.getHeapModel().getPointerKeyForLocal(node, ssaVal);
 				final OrdinalSet<InstanceKey> pointsToSet = pa.getPointsToSet(pk);

@@ -62,6 +62,7 @@ import com.ibm.wala.demandpa.flowgraph.IFlowLabel;
 import com.ibm.wala.demandpa.util.MemoryAccessMap;
 import com.ibm.wala.demandpa.util.SimpleMemoryAccessMap;
 import com.ibm.wala.ipa.callgraph.AnalysisCache;
+import com.ibm.wala.ipa.callgraph.AnalysisCacheImpl;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions;
 import com.ibm.wala.ipa.callgraph.AnalysisScope;
 import com.ibm.wala.ipa.callgraph.CGNode;
@@ -185,7 +186,7 @@ public class DemandCastChecker {
       throws IllegalArgumentException, CancelException {
     CallGraph retCG = null;
     PointerAnalysis retPA = null;
-    final AnalysisCache cache = new AnalysisCache();
+    final AnalysisCache cache = new AnalysisCacheImpl();
     CallGraphBuilder builder;
     if (CHEAP_CG) {
       builder = Util.makeZeroCFABuilder(options, cache, cha, scope);
@@ -223,7 +224,7 @@ public class DemandCastChecker {
 
   private static List<Pair<CGNode, SSACheckCastInstruction>> findFailingCasts(CallGraph cg, DemandRefinementPointsTo dmp) {
     final IClassHierarchy cha = dmp.getClassHierarchy();
-    List<Pair<CGNode, SSACheckCastInstruction>> failing = new ArrayList<Pair<CGNode, SSACheckCastInstruction>>();
+    List<Pair<CGNode, SSACheckCastInstruction>> failing = new ArrayList<>();
 
     int numSafe = 0, numMightFail = 0;
     outer: for (Iterator<? extends CGNode> nodeIter = cg.iterator(); nodeIter.hasNext();) {

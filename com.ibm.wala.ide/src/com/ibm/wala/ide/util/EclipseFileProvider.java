@@ -75,7 +75,9 @@ public class EclipseFileProvider extends FileProvider {
 
         IPath path = new Path(fileName);
         if (workspaceRoot_getFile.invoke(workspaceRoot, path) != null) {
-          return new JarFileModule(new JarFile(fileName, false));
+          try (final JarFile jar = new JarFile(fileName, false)) {
+            return new JarFileModule(jar);
+          }
         }
       } catch (Exception e) {
       }
@@ -105,7 +107,10 @@ public class EclipseFileProvider extends FileProvider {
    */
   private JarFileModule getFromPlugin(Plugin p, String fileName) throws IOException {
     URL url = getFileURLFromPlugin(p, fileName);
-    return (url == null) ? null : new JarFileModule(new JarFile(filePathFromURL(url)));
+    if (url == null) return null;
+    try (final JarFile jar = new JarFile(filePathFromURL(url))) {
+      return new JarFileModule(jar);
+    }
   }
   
   /**
@@ -143,7 +148,7 @@ public class EclipseFileProvider extends FileProvider {
       url = fixupFileURLSpaces(url);
       return url;
     } catch (ExceptionInInitializerError e) {
-      throw new IOException("failure to get file URL for " + fileName);
+      throw new IOException("failure to get file URL for " + fileName, e);
     }
   }
 

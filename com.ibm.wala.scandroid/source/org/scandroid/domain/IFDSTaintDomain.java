@@ -61,12 +61,12 @@ import com.ibm.wala.ssa.ISSABasicBlock;
 
 public class IFDSTaintDomain <E extends ISSABasicBlock>
   implements TabulationDomain<DomainElement, BasicBlockInContext<E>> {
-    private Map<DomainElement, Integer> table = new HashMap<DomainElement, Integer>();
-    private ArrayList<DomainElement> objects = new ArrayList<DomainElement>();
+    private Map<DomainElement, Integer> table = new HashMap<>();
+    private ArrayList<DomainElement> objects = new ArrayList<>();
 
-    private Map<CodeElement, Set<DomainElement>> elementIndex = new HashMap<CodeElement, Set<DomainElement>>();
+    private Map<CodeElement, Set<DomainElement>> elementIndex = new HashMap<>();
 
-    Set<DomainElement> emptySet = new HashSet<DomainElement>();
+    Set<DomainElement> emptySet = new HashSet<>();
     public Set<DomainElement> getPossibleElements(CodeElement codeElement)
     {
         Set<DomainElement> elts = elementIndex.get(codeElement);
@@ -80,12 +80,13 @@ public class IFDSTaintDomain <E extends ISSABasicBlock>
         Set<DomainElement> elements = elementIndex.get(e.codeElement);
         if(elements == null)
         {
-            elements = new HashSet<DomainElement>();
+            elements = new HashSet<>();
             elementIndex.put(e.codeElement, elements);
         }
         elements.add(e);
     }
 
+    @Override
     public int add(DomainElement o) {
         Integer i = table.get(o);
         if(i == null)
@@ -101,6 +102,7 @@ public class IFDSTaintDomain <E extends ISSABasicBlock>
     }
 
 
+    @Override
     public synchronized int getMappedIndex(final Object o) {
     	if (!(o instanceof DomainElement)) {
     		throw new IllegalArgumentException(o.getClass().getCanonicalName());
@@ -112,30 +114,36 @@ public class IFDSTaintDomain <E extends ISSABasicBlock>
         return (i == null ? add(de) : i);
     }
 
+    @Override
     public boolean hasPriorityOver(
             PathEdge<BasicBlockInContext<E>> p1,
             PathEdge<BasicBlockInContext<E>> p2) {
         return false;
     }
 
+    @Override
     public DomainElement getMappedObject(int n) {
         if(n > 0 && n <= objects.size())
             return objects.get(n - 1);
         return null;
     }
 
+    @Override
     public int getMaximumIndex() {
         return objects.size();
     }
 
+    @Override
     public int getSize() {
         return objects.size()+1;
     }
 
+    @Override
     public boolean hasMappedIndex(DomainElement o) {
         return table.keySet().contains(o);
     }
 
+    @Override
     public Iterator<DomainElement> iterator() {
         return table.keySet().iterator();
     }

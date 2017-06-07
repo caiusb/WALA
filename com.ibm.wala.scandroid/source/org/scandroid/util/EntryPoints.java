@@ -89,8 +89,8 @@ public class EntryPoints {
 
     private LinkedList<Entrypoint> entries;
 
-    public void listenerEntryPoints(ClassHierarchy cha, AndroidAnalysisContext loader) {
-        ArrayList<MethodReference> entryPointMRs = new ArrayList<MethodReference>();
+    public void listenerEntryPoints(ClassHierarchy cha) {
+        ArrayList<MethodReference> entryPointMRs = new ArrayList<>();
 
         // onLocation
         entryPointMRs.add(StringStuff.makeMethodReference("android.location.LocationListener.onLocationChanged(Landroid/location/Location;)V"));
@@ -109,7 +109,7 @@ public class EntryPoints {
     }
 
     public static List<Entrypoint> defaultEntryPoints(ClassHierarchy cha) {
-    	List<Entrypoint> entries = new ArrayList<Entrypoint>();
+    	List<Entrypoint> entries = new ArrayList<>();
     	for (MethodNamePattern mnp:new AndroidSpecs().getEntrypointSpecs()) {
     		for (IMethod im: mnp.getPossibleTargets(cha)) {
     			
@@ -124,7 +124,7 @@ public class EntryPoints {
     	return entries;
     }
     
-    public void activityModelEntry(ClassHierarchy cha, AndroidAnalysisContext loader) {
+    public void activityModelEntry(ClassHierarchy cha) {
         String[] methodReferences = {
             "android.app.Activity.ActivityModel()V",
             // find all onActivityResult functions and add them as entry points
@@ -184,7 +184,7 @@ public class EntryPoints {
     }
     
     
-    public void addTestEntry(ClassHierarchy cha, AndroidAnalysisContext loader) {
+    public void addTestEntry(ClassHierarchy cha) {
     	String[] methodReferences = {
 //    			"Test.Apps.Outer$PrivateInnerClass.printNum()V",
     			//"Test.Apps.Outer$PublicInnerClass.printNum()V"
@@ -288,7 +288,7 @@ public class EntryPoints {
 	private static String getTagValue(String sTag, Element eElement) {
         NodeList nlList = eElement.getElementsByTagName(sTag).item(0).getChildNodes();
 
-        Node nValue = (Node) nlList.item(0);
+        Node nValue = nlList.item(0);
 
         return nValue.getNodeValue();
     }

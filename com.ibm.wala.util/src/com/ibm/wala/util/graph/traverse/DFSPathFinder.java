@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import com.ibm.wala.util.Predicate;
 import com.ibm.wala.util.collections.HashMapFactory;
@@ -70,7 +69,7 @@ public class DFSPathFinder<T> extends ArrayList<T> {
       throw new IllegalArgumentException("source node not in graph: " + N);
     }
     this.G = G;
-    this.roots = new NonNullSingletonIterator<T>(N);
+    this.roots = new NonNullSingletonIterator<>(N);
     this.filter = f;
   }
 
@@ -125,7 +124,7 @@ public class DFSPathFinder<T> extends ArrayList<T> {
   }
 
   protected List<T> currentPath() {
-    ArrayList<T> result = new ArrayList<T>();
+    ArrayList<T> result = new ArrayList<>();
     for (Iterator<T> path = iterator(); path.hasNext();) {
       result.add(0, path.next());
     }

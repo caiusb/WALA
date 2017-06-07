@@ -104,8 +104,7 @@ public class CallArgSourceSpec extends SourceSpec {
 				// that this SSA value might point to
 				final int ssaVal = invInst.getUse(newArgNums[j]);
 				final CGNode node = block.getNode();
-				Set<CodeElement> valueElements = CodeElement.valueElements(pa,
-						node, ssaVal);
+				Set<CodeElement> valueElements = CodeElement.valueElements(ssaVal);
 				PointerKey pk = pa.getHeapModel().getPointerKeyForLocal(node, ssaVal);
 				for (InstanceKey ik : pa.getPointsToSet(pk)) {
 					valueElements.add(new InstanceKeyElement(ik));
@@ -121,7 +120,7 @@ public class CallArgSourceSpec extends SourceSpec {
 			BasicBlockInContext<E> block) {
 		HashSet<FlowType<E>> flowSet = HashSetFactory.make();
 		for (int i : argNums) {
-			flowSet.add(new ParameterFlow<E>(block, i, true));
+			flowSet.add(new ParameterFlow<>(block, i, true));
 		}
 		return flowSet;
 	}

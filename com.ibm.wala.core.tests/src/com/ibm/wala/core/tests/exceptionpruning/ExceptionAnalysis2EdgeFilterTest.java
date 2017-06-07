@@ -1,6 +1,7 @@
 package com.ibm.wala.core.tests.exceptionpruning;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import com.ibm.wala.analysis.exceptionanalysis.ExceptionAnalysis2EdgeFilter;
 import com.ibm.wala.cfg.ControlFlowGraph;
 import com.ibm.wala.core.tests.util.TestConstants;
 import com.ibm.wala.ipa.callgraph.AnalysisCache;
+import com.ibm.wala.ipa.callgraph.AnalysisCacheImpl;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions;
 import com.ibm.wala.ipa.callgraph.AnalysisScope;
 import com.ibm.wala.ipa.callgraph.CGNode;
@@ -79,7 +81,7 @@ public class ExceptionAnalysis2EdgeFilterTest {
     options.getSSAOptions().setPiNodePolicy(new AllIntegerDueToBranchePiPolicy());
 
     ReferenceCleanser.registerClassHierarchy(cha);
-    AnalysisCache cache = new AnalysisCache();
+    AnalysisCache cache = new AnalysisCacheImpl();
     ReferenceCleanser.registerCache(cache);
     CallGraphBuilder builder = Util.makeZeroCFABuilder(options, cache, cha, scope);
     cg = builder.makeCallGraph(options, null);
@@ -89,19 +91,19 @@ public class ExceptionAnalysis2EdgeFilterTest {
      * We will ignore some exceptions to focus on the exceptions we want to
      * raise (OwnException, ArrayIndexOutOfBoundException)
      */
-    filter = new CombinedInterproceduralExceptionFilter<SSAInstruction>();
-    filter.add(new IgnoreExceptionsInterFilter<SSAInstruction>(new IgnoreExceptionsFilter(TypeReference.JavaLangOutOfMemoryError)));
-    filter.add(new IgnoreExceptionsInterFilter<SSAInstruction>(new IgnoreExceptionsFilter(
+    filter = new CombinedInterproceduralExceptionFilter<>();
+    filter.add(new IgnoreExceptionsInterFilter<>(new IgnoreExceptionsFilter(TypeReference.JavaLangOutOfMemoryError)));
+    filter.add(new IgnoreExceptionsInterFilter<>(new IgnoreExceptionsFilter(
         TypeReference.JavaLangNullPointerException)));
-    filter.add(new IgnoreExceptionsInterFilter<SSAInstruction>(new IgnoreExceptionsFilter(
+    filter.add(new IgnoreExceptionsInterFilter<>(new IgnoreExceptionsFilter(
         TypeReference.JavaLangExceptionInInitializerError)));
-    filter.add(new IgnoreExceptionsInterFilter<SSAInstruction>(new IgnoreExceptionsFilter(
+    filter.add(new IgnoreExceptionsInterFilter<>(new IgnoreExceptionsFilter(
         TypeReference.JavaLangNegativeArraySizeException)));
   }
 
   @Test
   public void test() {
-    HashMap<String, Integer> deletedExceptional = new HashMap<String, Integer>();
+    HashMap<String, Integer> deletedExceptional = new HashMap<>();
     int deletedNormal = 0;
 
     ExceptionAnalysis analysis = new ExceptionAnalysis(cg, pointerAnalysis, cha, filter);
@@ -112,7 +114,7 @@ public class ExceptionAnalysis2EdgeFilterTest {
         EdgeFilter<ISSABasicBlock> exceptionAnalysedEdgeFilter = new ExceptionAnalysis2EdgeFilter(analysis, node);
 
         SSACFG cfg_orig = node.getIR().getControlFlowGraph();
-        ExceptionFilter2EdgeFilter<ISSABasicBlock> filterOnlyEdgeFilter = new ExceptionFilter2EdgeFilter<ISSABasicBlock>(
+        ExceptionFilter2EdgeFilter<ISSABasicBlock> filterOnlyEdgeFilter = new ExceptionFilter2EdgeFilter<>(
             filter.getFilter(node), cha, cfg_orig);
         ControlFlowGraph<SSAInstruction, ISSABasicBlock> cfg = PrunedCFG.make(cfg_orig, filterOnlyEdgeFilter);
         ControlFlowGraph<SSAInstruction, ISSABasicBlock> exceptionPruned = PrunedCFG.make(cfg_orig, exceptionAnalysedEdgeFilter);

@@ -86,7 +86,7 @@ import com.ibm.wala.ssa.SSAInvokeInstruction;
 import com.ibm.wala.util.collections.HashMapFactory;
 
 @SuppressWarnings("rawtypes")
-public class InflowAnalysis <E extends ISSABasicBlock> {
+public class InflowAnalysis {
 
     @SuppressWarnings("unchecked")
 	public static <E extends ISSABasicBlock>
@@ -97,13 +97,13 @@ public class InflowAnalysis <E extends ISSABasicBlock> {
             Set<CodeElement> newElements) {
         Map<FlowType<E>,Set<CodeElement>> blockMap = taintMap.get(block);
         if(blockMap == null) {
-            blockMap = new HashMap<FlowType<E>,Set<CodeElement>>();
+            blockMap = new HashMap<>();
             taintMap.put(block, blockMap);
         }
         
         Set<CodeElement> elements = blockMap.get(taintType);
         if(elements == null) {
-            elements = new HashSet<CodeElement>();
+            elements = new HashSet<>();
             blockMap.put(taintType, elements);
         }
         elements.addAll(newElements);
@@ -116,7 +116,7 @@ public class InflowAnalysis <E extends ISSABasicBlock> {
             FlowType taintType,
             CodeElement element) {
         
-        Set<CodeElement> elements = new HashSet<CodeElement>();
+        Set<CodeElement> elements = new HashSet<>();
         elements.add(element);
         addDomainElements(taintMap, block, taintType, elements);
     }
@@ -154,7 +154,6 @@ public class InflowAnalysis <E extends ISSABasicBlock> {
                             StaticFieldSourceSpec ss, 
                             CallGraph cg, 
                             ISupergraph<BasicBlockInContext<E>, CGNode> graph,
-                            ClassHierarchy cha,
                             PointerAnalysis<InstanceKey> pa) {
     	// get the first block:
     	BasicBlockInContext<E> bb = null;
@@ -174,8 +173,8 @@ public class InflowAnalysis <E extends ISSABasicBlock> {
                               ArrayList<SourceSpec> ssAL, ISupergraph<BasicBlockInContext<E>, CGNode> graph, 
                               PointerAnalysis<InstanceKey> pa, 
                               ClassHierarchy cha, CallGraph cg) {
-    	Collection<IMethod> targets = new HashSet<IMethod>();
-    	ArrayList<Collection<IMethod>> targetList = new ArrayList<Collection<IMethod>>();
+    	Collection<IMethod> targets = new HashSet<>();
+    	ArrayList<Collection<IMethod>> targetList = new ArrayList<>();
     	
     	for (int i = 0; i < ssAL.size(); i++) {
     		Collection<IMethod> tempList = ssAL.get(i).getNamePattern().getPossibleTargets(cha);
@@ -216,9 +215,9 @@ public class InflowAnalysis <E extends ISSABasicBlock> {
 
     public static <E extends ISSABasicBlock>
       Map<BasicBlockInContext<E>,Map<FlowType<E>,Set<CodeElement>>> analyze(
-            CGAnalysisContext<E> analysisContext, Map<InstanceKey, String> prefixes,
+            CGAnalysisContext<E> analysisContext,
             ISpecs s) {
-        return analyze(analysisContext, analysisContext.cg, analysisContext.getClassHierarchy(), analysisContext.graph, analysisContext.pa, prefixes, s);
+        return analyze(analysisContext, analysisContext.cg, analysisContext.getClassHierarchy(), analysisContext.graph, analysisContext.pa, s);
     }
 
     public static <E extends ISSABasicBlock>
@@ -228,21 +227,20 @@ public class InflowAnalysis <E extends ISSABasicBlock> {
           ClassHierarchy cha, 
           ISupergraph<BasicBlockInContext<E>, CGNode> graph,
           PointerAnalysis<InstanceKey> pa, 
-          Map<InstanceKey, String> prefixes,
           ISpecs s) {
 
         Map<BasicBlockInContext<E>, Map<FlowType<E>,Set<CodeElement>>> taintMap = HashMapFactory.make();
 
         SourceSpec[] ss = s.getSourceSpecs();
         
-        ArrayList<SourceSpec> ssAL = new ArrayList<SourceSpec>();
+        ArrayList<SourceSpec> ssAL = new ArrayList<>();
         for (int i = 0; i < ss.length; i++) {
         	if (ss[i] instanceof EntryArgSourceSpec)
         		processInputSource(ctx, taintMap, ss[i], cg, graph, cha, pa);
         	else if (ss[i] instanceof CallRetSourceSpec || ss[i] instanceof CallArgSourceSpec)
         		ssAL.add(ss[i]);
         	else if (ss[i] instanceof StaticFieldSourceSpec) {
-        		processStaticFieldSource(ctx, taintMap, (StaticFieldSourceSpec)ss[i], cg, graph, cha, pa);
+        		processStaticFieldSource(ctx, taintMap, (StaticFieldSourceSpec)ss[i], cg, graph, pa);
         	} else 
         		throw new UnsupportedOperationException("Unrecognized SourceSpec");
         } 

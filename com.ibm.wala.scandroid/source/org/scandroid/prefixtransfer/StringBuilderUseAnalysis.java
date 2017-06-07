@@ -74,28 +74,26 @@ public class StringBuilderUseAnalysis {
 
 	public final Map<ISSABasicBlock, ISSABasicBlock> blockOrdering;
 	
-	private final InstanceKey sbik;
 	private final CGNode node;
 	private final PointerAnalysis<InstanceKey> pa;
-	private final Set<LocalPointerKey> localPointerKeys = new HashSet<LocalPointerKey>();
+	private final Set<LocalPointerKey> localPointerKeys = new HashSet<>();
 	private final List<SSAInstruction> instructions;
 	
-	public StringBuilderUseAnalysis(final InstanceKey ik, final PointerAnalysis<InstanceKey> pa) throws Exception {
+	public StringBuilderUseAnalysis(final InstanceKey ik, final PointerAnalysis<InstanceKey> pa) {
 		assert(ik.getConcreteType().getName().toString().equals("Ljava/lang/StringBuilder"));
 	
-		this.sbik = ik;
 		this.pa = pa;
 		this.node = findCGNode(ik, pa);
 		this.instructions = findInstructions();
 		
-		final HashSet<ISSABasicBlock> blockSet = new HashSet<ISSABasicBlock>();
+		final HashSet<ISSABasicBlock> blockSet = new HashSet<>();
 		for (final SSAInstruction inst : instructions) {
 			blockSet.add(node.getIR().getBasicBlockForInstruction(inst));
 		}
 		
 		// find the ordering for all of the instructions
 		final BlockSearch blockSearch = new BlockSearch(node.getIR());
-		final Map<ISSABasicBlock,ISSABasicBlock> blockOrdering = new HashMap<ISSABasicBlock, ISSABasicBlock>();
+		final Map<ISSABasicBlock,ISSABasicBlock> blockOrdering = new HashMap<>();
 		
 		for (final ISSABasicBlock b : blockSet) {
 			final ISSABasicBlock target = blockSearch.searchFromBlock(b, blockSet);
@@ -108,7 +106,7 @@ public class StringBuilderUseAnalysis {
 		this.blockOrdering = blockOrdering;
 	}
 
-	private CGNode findCGNode(final InstanceKey ik, final PointerAnalysis<InstanceKey> pa) throws Exception {
+	private CGNode findCGNode(final InstanceKey ik, final PointerAnalysis<InstanceKey> pa) {
 		CGNode nominatedNode = null;
 		
 		for (final PointerKey pk : pa.getPointerKeys()) {
@@ -144,7 +142,7 @@ public class StringBuilderUseAnalysis {
 	}
 
 	private List<SSAInstruction> findInstructions() {
-		List<SSAInstruction> instructions = new ArrayList<SSAInstruction>();
+		List<SSAInstruction> instructions = new ArrayList<>();
 		if (node != null) {
 			for (SSAInstruction inst: node.getIR().getInstructions()) {
 				if (inst instanceof SSAInvokeInstruction) {
@@ -206,6 +204,7 @@ public class StringBuilderUseAnalysis {
 			return retVal;
 		}
 
+		@Override
 		public String toString() {
 			return ("StringBuilderToString(instanceID = " + instanceID + "; concatenatedInstanceKeys = " + concatenatedInstanceKeys + ")");
 		}
@@ -221,8 +220,8 @@ public class StringBuilderUseAnalysis {
 		final ISSABasicBlock bbs[] = node.getIR().getBasicBlocksForCall(csr);
 		
 		final OrdinalSetMapping<InstanceKey> mapping = pa.getInstanceKeyMapping();
-		final HashSet<ISSABasicBlock> blocksSeen = new HashSet<ISSABasicBlock>();
-		final ArrayList<Integer> concatenatedInstanceKeys = new ArrayList<Integer>();
+		final HashSet<ISSABasicBlock> blocksSeen = new HashSet<>();
+		final ArrayList<Integer> concatenatedInstanceKeys = new ArrayList<>();
 
 		ISSABasicBlock bPrev = bbs[0];
 		ISSABasicBlock bNext = blockOrdering.get(bPrev);

@@ -67,11 +67,11 @@ public abstract class JavaIRTests extends IRTests {
   @Test public void testSimple1() throws IllegalArgumentException, CancelException, IOException {
 
     List<? extends IRAssertion> assertions = Arrays.asList(
-        new SourceMapAssertion("Source#Simple1#doStuff#(I)V", "prod", 24),
-        new SourceMapAssertion("Source#Simple1#doStuff#(I)V", "j", 23), 
-        new SourceMapAssertion("Source#Simple1#main#([Ljava/lang/String;)V", "s", 32), 
-        new SourceMapAssertion("Source#Simple1#main#([Ljava/lang/String;)V", "i", 28), 
-        new SourceMapAssertion("Source#Simple1#main#([Ljava/lang/String;)V", "sum", 29), 
+        new SourceMapAssertion("Source#Simple1#doStuff#(I)V", "prod", 25),
+        new SourceMapAssertion("Source#Simple1#doStuff#(I)V", "j", 24), 
+        new SourceMapAssertion("Source#Simple1#main#([Ljava/lang/String;)V", "s", 33), 
+        new SourceMapAssertion("Source#Simple1#main#([Ljava/lang/String;)V", "i", 29), 
+        new SourceMapAssertion("Source#Simple1#main#([Ljava/lang/String;)V", "sum", 30), 
         EdgeAssertions.make("Source#Simple1#main#([Ljava/lang/String;)V", "Source#Simple1#doStuff#(I)V"), 
         EdgeAssertions.make("Source#Simple1#instanceMethod1#()V", "Source#Simple1#instanceMethod2#()V"));
 
@@ -615,7 +615,7 @@ public abstract class JavaIRTests extends IRTests {
     // test partial slice
     MethodReference sliceRootRef = getSliceRootReference("MiniaturSliceBug", "validNonDispatchedCall", "(LIntWrapper;)V");
     Set<CGNode> roots = cg.getNodes(sliceRootRef);
-    Pair<Collection<Statement>, SDG> y = AstJavaSlicer.computeAssertionSlice(cg, pa, roots, false);
+    Pair<Collection<Statement>,SDG<InstanceKey>> y = AstJavaSlicer.computeAssertionSlice(cg, pa, roots, false);
     Collection<Statement> slice = y.fst;
     SlicerTest.dumpSlice(slice);
     Assert.assertEquals(0, SlicerTest.countAllocations(slice));

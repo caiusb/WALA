@@ -26,17 +26,17 @@ public class ClassWriter implements ClassConstants {
 
   private ConstantPoolParser rawCP;
 
-  private HashMap<Object, Integer> cachedCPEntries = new HashMap<Object, Integer>(1);
+  private HashMap<Object, Integer> cachedCPEntries = new HashMap<>(1);
 
-  final private ArrayList<Object> newCPEntries = new ArrayList<Object>(1);
+  final private ArrayList<Object> newCPEntries = new ArrayList<>(1);
 
   private int nextCPIndex = 1;
 
-  final private ArrayList<Element> fields = new ArrayList<Element>(1);
+  final private ArrayList<Element> fields = new ArrayList<>(1);
 
-  final private ArrayList<Element> methods = new ArrayList<Element>(1);
+  final private ArrayList<Element> methods = new ArrayList<>(1);
 
-  final private ArrayList<Element> classAttributes = new ArrayList<Element>(1);
+  final private ArrayList<Element> classAttributes = new ArrayList<>(1);
 
   private int thisClass;
 
@@ -952,7 +952,7 @@ public class ClassWriter implements ClassConstants {
     try {
       buf[offset] = (byte) v;
     } catch (ArrayIndexOutOfBoundsException e) {
-      throw new IllegalArgumentException("invalid offset: " + offset);
+      throw new IllegalArgumentException("invalid offset: " + offset, e);
     }
   }
 
@@ -971,7 +971,7 @@ public class ClassWriter implements ClassConstants {
       buf[offset + 2] = (byte) (v >> 8);
       buf[offset + 3] = (byte) v;
     } catch (ArrayIndexOutOfBoundsException e) {
-      throw new IllegalArgumentException("illegal offset " + offset);
+      throw new IllegalArgumentException("illegal offset " + offset, e);
     }
   }
 
@@ -1013,7 +1013,7 @@ public class ClassWriter implements ClassConstants {
       buf[offset] = (byte) (v >> 8);
       buf[offset + 1] = (byte) v;
     } catch (ArrayIndexOutOfBoundsException e) {
-      throw new IllegalArgumentException("invalid offset: " + offset);
+      throw new IllegalArgumentException("invalid offset: " + offset, e);
     }
   }
 }

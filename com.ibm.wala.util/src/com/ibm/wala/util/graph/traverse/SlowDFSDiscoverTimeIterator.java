@@ -22,7 +22,7 @@ import com.ibm.wala.util.graph.Graph;
  * discover time. This class follows the outNodes of the graph nodes to define the graph, but this behavior can be changed by
  * overriding the getConnected method.
  */
-public class SlowDFSDiscoverTimeIterator<T> extends GraphDFSDiscoverTimeIterator<T> implements Iterator<T> {
+public class SlowDFSDiscoverTimeIterator<T> extends GraphDFSDiscoverTimeIterator<T> {
   public static final long serialVersionUID = 9439217987188L;
 
   /**
@@ -42,7 +42,7 @@ public class SlowDFSDiscoverTimeIterator<T> extends GraphDFSDiscoverTimeIterator
    * @param G the graph whose nodes to enumerate
    */
   public SlowDFSDiscoverTimeIterator(Graph<T> G, T N) {
-    init(G, new NonNullSingletonIterator<T>(N));
+    init(G, new NonNullSingletonIterator<>(N));
   }
 
   /**

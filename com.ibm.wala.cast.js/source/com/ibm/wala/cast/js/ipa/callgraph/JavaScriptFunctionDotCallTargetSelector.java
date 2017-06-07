@@ -63,7 +63,6 @@ public class JavaScriptFunctionDotCallTargetSelector implements MethodTargetSele
 
   public JavaScriptFunctionDotCallTargetSelector(MethodTargetSelector base) {
     this.base = base;
-
   }
 
   /*

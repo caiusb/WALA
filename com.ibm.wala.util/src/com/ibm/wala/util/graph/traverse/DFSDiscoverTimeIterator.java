@@ -13,7 +13,6 @@ package com.ibm.wala.util.graph.traverse;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Stack;
 
 import com.ibm.wala.util.collections.EmptyIterator;
 import com.ibm.wala.util.collections.NonNullSingletonIterator;
@@ -49,7 +48,7 @@ public abstract class DFSDiscoverTimeIterator<T> extends ArrayList<T> implements
    * subclass constructors must call this!
    */
   protected void init(T N) {
-    init(new NonNullSingletonIterator<T>(N));
+    init(new NonNullSingletonIterator<>(N));
   }
 
   /**

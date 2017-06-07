@@ -76,7 +76,6 @@ import org.scandroid.util.CGAnalysisContext;
 
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.dataflow.IFDS.ICFGSupergraph;
-import com.ibm.wala.dataflow.IFDS.ISupergraph;
 import com.ibm.wala.dataflow.IFDS.TabulationResult;
 import com.ibm.wala.ipa.callgraph.CGNode;
 import com.ibm.wala.ipa.callgraph.CallGraph;
@@ -128,7 +127,7 @@ public class OutflowAnalysis {
 			FlowType<IExplodedBasicBlock> dest) {
 		Set<FlowType<IExplodedBasicBlock>> dests = graph.get(source);
 		if (dests == null) {
-			dests = new HashSet<FlowType<IExplodedBasicBlock>>();
+			dests = new HashSet<>();
 			graph.put(source, dests);
 		}
 		dests.add(dest);
@@ -409,17 +408,13 @@ public class OutflowAnalysis {
 	public Map<FlowType<IExplodedBasicBlock>, Set<FlowType<IExplodedBasicBlock>>> analyze(
 			TabulationResult<BasicBlockInContext<IExplodedBasicBlock>, CGNode, DomainElement> flowResult,
 			IFDSTaintDomain<IExplodedBasicBlock> domain) {
-		return analyze(ctx.cg, ctx.getClassHierarchy(), ctx.graph, ctx.pa,
-				flowResult, domain, specs);
+		return analyze(flowResult, domain, specs);
 	}
 
 	public Map<FlowType<IExplodedBasicBlock>, Set<FlowType<IExplodedBasicBlock>>> analyze(
-			CallGraph cg,
-			ClassHierarchy cha,
-			ISupergraph<BasicBlockInContext<IExplodedBasicBlock>, CGNode> graph,
-			PointerAnalysis<InstanceKey> pa,
 			TabulationResult<BasicBlockInContext<IExplodedBasicBlock>, CGNode, DomainElement> flowResult,
-			IFDSTaintDomain<IExplodedBasicBlock> domain, ISpecs s) {
+			IFDSTaintDomain<IExplodedBasicBlock> domain,
+			ISpecs s) {
 
 		
 		
@@ -526,7 +521,7 @@ public class OutflowAnalysis {
 						.getICFG().getExit(node);
 				for (int argNum : sinkSpec.getArgNums()) {
 					final int ssaVal = node.getIR().getParameter(argNum);
-					final ParameterFlow<IExplodedBasicBlock> sinkFlow = new ParameterFlow<IExplodedBasicBlock>(
+					final ParameterFlow<IExplodedBasicBlock> sinkFlow = new ParameterFlow<>(
 							entryBlock, argNum, false);
 					final LocalSinkPoint sinkPoint = new LocalSinkPoint(
 							exitBlock, ssaVal, sinkFlow);
@@ -588,13 +583,13 @@ public class OutflowAnalysis {
 							final IExplodedBasicBlock block = graph.getICFG()
 									.getCFG(caller)
 									.getBlockForInstruction(invokeIndex);
-							BasicBlockInContext<IExplodedBasicBlock> callBlock = new BasicBlockInContext<IExplodedBasicBlock>(
+							BasicBlockInContext<IExplodedBasicBlock> callBlock = new BasicBlockInContext<>(
 									caller, block);
 
 							for (int argNum : sinkSpec.getArgNums()) {
 								// and add a sink point for each arg num
 								final int ssaVal = invokeInst.getUse(argNum);
-								final ParameterFlow<IExplodedBasicBlock> sinkFlow = new ParameterFlow<IExplodedBasicBlock>(
+								final ParameterFlow<IExplodedBasicBlock> sinkFlow = new ParameterFlow<>(
 										callBlock, argNum, false);
 								final LocalSinkPoint sinkPoint = new LocalSinkPoint(
 										callBlock, ssaVal, sinkFlow);
@@ -639,7 +634,7 @@ public class OutflowAnalysis {
 						SSAReturnInstruction returnInst = (SSAReturnInstruction) inst;
 						if (!returnInst.returnsVoid()) {
 							final int ssaVal = returnInst.getResult();
-							final ReturnFlow<IExplodedBasicBlock> sinkFlow = new ReturnFlow<IExplodedBasicBlock>(
+							final ReturnFlow<IExplodedBasicBlock> sinkFlow = new ReturnFlow<>(
 									exitBlock, false);
 							final LocalSinkPoint sinkPoint = new LocalSinkPoint(
 									exitBlock, ssaVal, sinkFlow);

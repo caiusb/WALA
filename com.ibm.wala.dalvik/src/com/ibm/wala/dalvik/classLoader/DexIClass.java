@@ -77,7 +77,6 @@ import com.ibm.wala.classLoader.IField;
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.classLoader.Module;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
-import com.ibm.wala.shrikeCT.InvalidClassFileException;
 import com.ibm.wala.types.TypeReference;
 import com.ibm.wala.types.annotations.Annotation;
 import com.ibm.wala.util.collections.HashMapFactory;
@@ -208,6 +207,7 @@ public class DexIClass extends BytecodeClass<IClassLoader> {
      * (non-Javadoc)
      * @see com.ibm.wala.classLoader.IClass#isPublic()
      */
+    @Override
     public boolean isPublic() {
         return (modifiers & PUBLIC.getValue()) != 0;
     }
@@ -216,6 +216,7 @@ public class DexIClass extends BytecodeClass<IClassLoader> {
      * (non-Javadoc)
      * @see com.ibm.wala.classLoader.IClass#isPrivate()
      */
+    @Override
     public boolean isPrivate() {
         return (modifiers & PRIVATE.getValue()) != 0;
     }
@@ -224,6 +225,7 @@ public class DexIClass extends BytecodeClass<IClassLoader> {
      * (non-Javadoc)
      * @see com.ibm.wala.classLoader.IClass#isInterface()
      */
+    @Override
     public boolean isInterface() {
         return (modifiers & INTERFACE.getValue()) != 0;
 
@@ -232,6 +234,7 @@ public class DexIClass extends BytecodeClass<IClassLoader> {
     /*
      * @see com.ibm.wala.classLoader.IClass#isAbstract()
      */
+    @Override
     public boolean isAbstract() {
         return (modifiers & ABSTRACT.getValue()) != 0;
     }
@@ -241,6 +244,7 @@ public class DexIClass extends BytecodeClass<IClassLoader> {
      * (non-Javadoc)
      * @see com.ibm.wala.classLoader.IClass#getModifiers()
      */
+    @Override
     public int getModifiers() throws UnsupportedOperationException {
         return modifiers;
     }
@@ -278,11 +282,13 @@ public class DexIClass extends BytecodeClass<IClassLoader> {
     	  return result;
       }
       
+      @Override
       public Collection<Annotation> getAnnotations() {
     	  return getAnnotations((Set<AnnotationVisibility>)null);
       }
 
-      public Collection<Annotation> getAnnotations(boolean runtimeInvisible) throws InvalidClassFileException {
+      @Override
+      public Collection<Annotation> getAnnotations(boolean runtimeInvisible) {
   		return getAnnotations(getTypes(runtimeInvisible));
       }
 
@@ -298,7 +304,7 @@ public class DexIClass extends BytecodeClass<IClassLoader> {
 	}
 
       List<AnnotationItem> getAnnotations(MethodIdItem m, Set<AnnotationVisibility> types) {
-    	  List<AnnotationItem> result = new ArrayList<AnnotationItem>();
+    	  List<AnnotationItem> result = new ArrayList<>();
     	  AnnotationDirectoryItem d = dexModuleEntry.getClassDefItem().getAnnotations();
     	  if (d != null && d.getMethodAnnotations(m) !=  null) {
     		  for(AnnotationItem a : d.getMethodAnnotations(m).getAnnotations()) {
@@ -311,7 +317,7 @@ public class DexIClass extends BytecodeClass<IClassLoader> {
       }
 
       List<AnnotationItem> getAnnotations(FieldIdItem m) {
-    	  List<AnnotationItem> result = new ArrayList<AnnotationItem>();
+    	  List<AnnotationItem> result = new ArrayList<>();
     	  AnnotationDirectoryItem d = dexModuleEntry.getClassDefItem().getAnnotations();
     	  if (d != null) {
     		  for(AnnotationItem a : d.getFieldAnnotations(m).getAnnotations()) {
@@ -344,8 +350,8 @@ public class DexIClass extends BytecodeClass<IClassLoader> {
      * @see com.ibm.wala.classLoader.BytecodeClass#computeDeclaredMethods()
      */
     @Override
-    protected IMethod[] computeDeclaredMethods() throws InvalidClassFileException {
-    	ArrayList<IMethod> methodsAL = new ArrayList<IMethod>();
+    protected IMethod[] computeDeclaredMethods() {
+    	ArrayList<IMethod> methodsAL = new ArrayList<>();
     	    	
         if (methods == null && classDef.getClassData() == null)
             methods = new IMethod[0];
@@ -396,12 +402,10 @@ public class DexIClass extends BytecodeClass<IClassLoader> {
      * (non-Javadoc)
      * @see com.ibm.wala.classLoader.IClass#getClassInitializer()
      */
+    @Override
     public IMethod getClassInitializer() {
         if (methods == null){
-            try {
-                computeDeclaredMethods();
-            } catch (InvalidClassFileException e) {
-            }
+            computeDeclaredMethods();
         }
 //      return construcorId!=-1?methods[construcorId]:null;
         return clinitId!=-1?methods[clinitId]:null;

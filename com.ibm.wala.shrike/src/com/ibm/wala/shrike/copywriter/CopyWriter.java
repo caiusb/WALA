@@ -91,9 +91,9 @@ public class CopyWriter {
       System.exit(1);
     }
 
-    final ArrayList<ZipEntry> entries = new ArrayList<ZipEntry>();
+    final ArrayList<ZipEntry> entries = new ArrayList<>();
 
-    instrumenter = new OfflineInstrumenter(true);
+    instrumenter = new OfflineInstrumenter();
     instrumenter.setManifestBuilder(new OfflineInstrumenter.ManifestBuilder() {
       @Override
       public void addEntry(ZipEntry ze) {
