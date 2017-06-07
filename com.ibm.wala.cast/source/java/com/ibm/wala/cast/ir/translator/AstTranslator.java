@@ -522,6 +522,8 @@ public abstract class AstTranslator extends CAstVisitor<AstTranslator.WalkContex
 
     @Override
     public Position getInstructionPosition(int instructionOffset) {
+      if (instructionOffset >= instructionPositions.length)
+        return null;
       return instructionPositions[instructionOffset];
     }
 
