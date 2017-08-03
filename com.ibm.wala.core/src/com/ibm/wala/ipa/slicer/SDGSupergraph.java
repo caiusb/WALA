@@ -15,7 +15,6 @@ import java.util.Iterator;
 import com.ibm.wala.dataflow.IFDS.ISupergraph;
 import com.ibm.wala.ipa.callgraph.CGNode;
 import com.ibm.wala.ipa.callgraph.propagation.InstanceKey;
-import com.ibm.wala.ipa.slicer.Slicer.ControlDependenceOptions;
 import com.ibm.wala.ssa.SSAAbstractInvokeInstruction;
 import com.ibm.wala.util.Predicate;
 import com.ibm.wala.util.collections.EmptyIterator;
@@ -47,7 +46,7 @@ class SDGSupergraph implements ISupergraph<Statement, PDG<? extends InstanceKey>
     return null;
   }
 
-  public Object[] getEntry(Statement n) {
+  public Object[] getEntry() {
     Assertions.UNREACHABLE();
     return null;
   }

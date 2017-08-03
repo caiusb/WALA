@@ -76,6 +76,7 @@ public class ConstructorsAndInitializers extends Super {
 				iX = 55 + 12;
 			}
 
+      @Override
       public String toString() {
 				return s + " -- from an anon class in " + iX + "," + sX + ": " + ConstructorsAndInitializers.this.s;
 			}
@@ -101,7 +102,6 @@ public class ConstructorsAndInitializers extends Super {
 		class T{
 			
 		}
-		@SuppressWarnings("unused")
 		T t = new T();
 	}
 }

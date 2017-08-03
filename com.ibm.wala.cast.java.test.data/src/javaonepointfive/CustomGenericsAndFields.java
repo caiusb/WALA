@@ -52,6 +52,7 @@ class ConcreteGeneric<Q> implements IGeneric<Q> {
 	Q x;
 
 	
+  @Override
   public Q bar(Q a, Q b) {
 		x = a;
 		if (b.hashCode() == a.hashCode() || b.toString().equals(a.toString()))
@@ -60,6 +61,7 @@ class ConcreteGeneric<Q> implements IGeneric<Q> {
 	}
 
 	
+  @Override
   public Q foo() {
 		return x;
 	}
@@ -71,6 +73,7 @@ class ConcreteGeneric2<Q> extends ConcreteGeneric<Q> {
 		y = a;
 	}
 	
+  @Override
   public Q foo() {
 		return y;
 	}
@@ -113,13 +116,11 @@ public class CustomGenericsAndFields {
 
 		/////////////////////////////
 
-		@SuppressWarnings("unused")
 		String thrownaway = cg2.bar("a","b");
 		cg2.setFoo("real one");
 		MyGeneric<String,ConcreteGeneric2<String>> mygeneric = new MyGeneric<String,ConcreteGeneric2<String>>("useless",cg2);
 		String x = mygeneric.doFoo();
 		System.out.println(x);
-		@SuppressWarnings("unused")
 		String y = cg2.x;
 		System.out.println(mygeneric.getB().y);
 		System.out.println(mygeneric.b.y); // TODO: fields are going to be a pain... watch out for Lvalues in context?

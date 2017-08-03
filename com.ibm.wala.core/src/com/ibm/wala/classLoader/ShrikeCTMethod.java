@@ -343,7 +343,7 @@ public final class ShrikeCTMethod extends ShrikeBTMethod implements IBytecodeMet
     ClassReader.AttrIterator iter = new AttrIterator();
     getClassReader().initMethodAttributeIterator(shrikeMethodIndex, iter);
 
-    return ((ShrikeClass)getDeclaringClass()).getReader(iter, attrName, reader);    
+    return ShrikeClass.getReader(iter, attrName, reader);
   }
 
   private CodeReader getCodeReader() {
@@ -464,7 +464,7 @@ public final class ShrikeCTMethod extends ShrikeBTMethod implements IBytecodeMet
     final ClassLoaderReference clRef = getDeclaringClass().getClassLoader().getReference();
     return TypeAnnotation.getTypeAnnotationsFromReader(
         r,
-        TypeAnnotation.targetConverterAtMethodInfo(clRef, this),
+        TypeAnnotation.targetConverterAtMethodInfo(clRef),
         clRef
     );
   }

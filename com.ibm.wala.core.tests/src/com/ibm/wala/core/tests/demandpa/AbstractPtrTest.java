@@ -236,7 +236,7 @@ public abstract class AbstractPtrTest {
     AnalysisOptions options = CallGraphTestUtil.makeAnalysisOptions(scope, entrypoints);
 
     final AnalysisCache analysisCache = new AnalysisCacheImpl();
-    CallGraphBuilder cgBuilder = Util.makeZeroCFABuilder(options, analysisCache, cha, scope);
+    CallGraphBuilder<InstanceKey> cgBuilder = Util.makeZeroCFABuilder(options, analysisCache, cha, scope);
     final CallGraph cg = cgBuilder.makeCallGraph(options, null);
     // System.err.println(cg.toString());
 
@@ -258,7 +258,7 @@ public abstract class AbstractPtrTest {
    * @return
    * @throws ClassHierarchyException
    */
-  private IClassHierarchy findOrCreateCHA(AnalysisScope scope) throws ClassHierarchyException {
+  private static IClassHierarchy findOrCreateCHA(AnalysisScope scope) throws ClassHierarchyException {
     if (cachedCHA == null) {
       cachedCHA = ClassHierarchyFactory.make(scope);
     }

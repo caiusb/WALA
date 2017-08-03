@@ -10,7 +10,6 @@
  *****************************************************************************/
 public class Inheritance1 {
     public static void main(String[] args) {
-	@SuppressWarnings("unused")
 	Inheritance1 ih1= new Inheritance1();
 	Base b1 = new Base();
 	Base b2 = new Derived();
@@ -23,7 +22,6 @@ public class Inheritance1 {
 }
 class Base {
     public void foo() {
-	@SuppressWarnings("unused")
 	int i= 0;
     }
     public String bar(int x) {
@@ -32,10 +30,12 @@ class Base {
 }
 class Derived extends Base {
     
+    @Override
     public void foo() {
 	super.foo();
     }
     
+    @Override
     public String bar(int x) {
 	return Integer.toHexString(x);
     }

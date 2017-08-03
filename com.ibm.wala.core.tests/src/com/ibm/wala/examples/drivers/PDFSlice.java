@@ -100,7 +100,7 @@ public class PDFSlice {
    *      -dir argument tells whether to compute a forwards or backwards slice. </ul>
    * 
    */
-  public static void main(String[] args) throws WalaException, IllegalArgumentException, CancelException, IOException {
+  public static void main(String[] args) throws IllegalArgumentException, CancelException, IOException {
     run(args);
   }
 
@@ -111,7 +111,7 @@ public class PDFSlice {
    * @throws IllegalArgumentException
    * @throws IOException
    */
-  public static Process run(String[] args) throws WalaException, IllegalArgumentException, CancelException, IOException {
+  public static Process run(String[] args) throws IllegalArgumentException, CancelException, IOException {
     // parse the command-line into a Properties object
     Properties p = CommandLine.parse(args);
     // validate that the command-line has the expected format
@@ -155,7 +155,7 @@ public class PDFSlice {
       ClassHierarchy cha = ClassHierarchyFactory.make(scope);
       Iterable<Entrypoint> entrypoints = com.ibm.wala.ipa.callgraph.impl.Util.makeMainEntrypoints(scope, cha, mainClass);
       AnalysisOptions options = CallGraphTestUtil.makeAnalysisOptions(scope, entrypoints);
-      CallGraphBuilder builder = Util.makeVanillaZeroOneCFABuilder(options, new AnalysisCacheImpl(), cha, scope);
+      CallGraphBuilder<InstanceKey> builder = Util.makeVanillaZeroOneCFABuilder(options, new AnalysisCacheImpl(), cha, scope);
       // CallGraphBuilder builder = Util.makeZeroOneCFABuilder(options, new
       // AnalysisCache(), cha, scope);
       CallGraph cg = builder.makeCallGraph(options, null);
